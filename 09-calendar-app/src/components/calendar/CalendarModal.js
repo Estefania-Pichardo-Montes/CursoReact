@@ -8,7 +8,9 @@ import Swal from 'sweetalert2';
 
 import { uiCloseModal } from '../../actions/ui';
 import { eventClearActiveEvent, eventStartAddNew, eventStartUpdated } from '../../actions/events';
+import { w3cwebsocket as W3CWebSocket } from "websocket";
 
+const cliente= new W3CWebSocket('ws://127.0.0.1:8000');
 
 const customStyles = {
     content : {
@@ -111,6 +113,14 @@ export const CalendarModal = () => {
             dispatch( eventStartAddNew(formValues) );
         }
 
+        //Agregue esto para ver si se envia el evento cuando hacemos el submit
+        cliente.send(JSON.stringify({
+                type:'message',
+                msg: formValues,
+                
+            }),
+            console.log('Enviado')
+        );
 
         setTitleValid(true);
         closeModal();

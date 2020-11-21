@@ -16,11 +16,13 @@ import { eventSetActive, eventClearActiveEvent, eventStartLoading } from '../../
 import { AddNewFab } from '../ui/AddNewFab';
 import { DeleteEventFab } from '../ui/DeleteEventFab';
 
+
 moment.locale('es');
 
 const localizer = momentLocalizer(moment);
 
 export const CalendarScreen = () => {
+
 
     const dispatch = useDispatch();
     const { events, activeEvent } = useSelector( state => state.calendar );
@@ -29,9 +31,16 @@ export const CalendarScreen = () => {
 
     const [lastView, setLastView] = useState( localStorage.getItem('lastView') || 'month' );
 
+    //En el efecto agregue el cliente.onopen pero aun no me marca en la consola que esta conectado,
+    //La consola del servidor si marca que se recibio una conexion
+    
     useEffect(() => {
         dispatch(eventStartLoading());
+        
+        
     }, [dispatch]);
+
+
     const onDoubleClick = (e) => {
         // console.log(e);
         dispatch( uiOpenModal() );
@@ -67,8 +76,8 @@ export const CalendarScreen = () => {
             style
         }
     };
-
     return (
+        
         <div className="calendar-screen">
             <Navbar />
             

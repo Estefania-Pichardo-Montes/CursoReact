@@ -18,7 +18,8 @@
     "react-scripts": "3.4.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "sweetalert2": "^9.14.3"
+    "sweetalert2": "^9.14.3",
+    "websocket": "^1.0.32"
   },
   "scripts": {
     "start": "react-scripts start",
