@@ -16,8 +16,10 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-validator": "^6.6.1",
+    "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
-    "mongoose": "^5.10.13"
+    "mongoose": "^5.10.13",
+    "websocket": "^1.0.32"
   }
 }
