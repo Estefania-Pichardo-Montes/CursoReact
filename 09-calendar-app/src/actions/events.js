@@ -5,8 +5,8 @@ import { types } from "../types/types";
 //Creo que en las acciones deberia dispararse el websocket asi que pondre aqui su importacion
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 
-//Creamos el cliente, lo voy a importar para utilizarlo en el calendarModal
-export const client = new  W3CWebSocket('ws://127.0.0.1:8000');
+//Creamos el cliente
+const client = new  W3CWebSocket('ws://127.0.0.1:8000');
 
 
 
@@ -29,7 +29,16 @@ export const eventStartAddNew=(event)=>{
                 //console.log(event);
                 
                 dispatch(eventAddNew(event));
-                dispatch(eventStartLoading());
+                //Cuando agrego un evento mando el mensaje
+                client.send(JSON.stringify({
+                    type:'message',
+                    msg: event,
+                    
+                }),
+                    console.log('Enviamos nuevo evento')
+                );
+        
+                //dispatch(eventStartLoading());
                
             }
         }
@@ -68,9 +77,19 @@ export const eventStartUpdated=(event)=>{
             const body= await resp.json();
 
             if(body.ok){
+
                 dispatch(eventUpdated(event));
-                console.log(event);
-                dispatch(eventStartLoading());
+
+                //Tambien envio el mensaje cuando actualizo un evento
+                client.send(JSON.stringify({
+                    type:'message',
+                    msg: event,
+                    
+                }),
+                    console.log('Enviado el evento actualizado', event)
+                );
+
+                //dispatch(eventStartLoading());
             }
             else{
                 Swal.fire('Error', body.msg, 'error');
@@ -96,12 +115,19 @@ export const eventStartDelete=()=>{
             if(body.ok){
                 dispatch(eventDeleted());
                 
-                
+                //Para tratar de mostrar los cambios cuando se borra algun evento
+                client.send(JSON.stringify({
+                    type:'message',
+                    msg: id,
+                    
+                }),
+                    console.log('El evento se ha borrado' )
+                );
             }
             else{
                 Swal.fire('Error', body.msg, 'error');
             }
-            dispatch(eventStartLoading());
+            //dispatch(eventStartLoading());
 
         }catch(error){
             console.log(error);
@@ -120,8 +146,9 @@ export const eventStartLoading=()=>{
             const body= await resp.json();
                         
             const events=preparteEvent(body.eventos);
-            console.log(events);
+            //console.log(events);
             dispatch(eventLoaded(events));
+            //dispatch(recibirMensajes());
 
             //Aqui puse el abrir la conexion del cliente 
             client.onopen=()=>{
@@ -130,14 +157,14 @@ export const eventStartLoading=()=>{
             //Tambien el recibir mensajes
             client.onmessage=async(message)=>{
                 const dataFromServer=JSON.parse(message.data);
-                //console.log('Respuesta ', dataFromServer);
+                console.log('Recibi los cambios ', dataFromServer);
                 if(dataFromServer.type==="message"){
                    
                     const resp= await fetchConToken('events');
                     const body= await resp.json();
-                     console.log('Entre al onmessage');           
+                    //console.log('Entre al onmessage');           
                     const events=preparteEvent(body.eventos);
-                    console.log(events);
+                    //console.log(events);
                     //console.log('Vuelvo a recibir los eventos');
                    dispatch(eventLoaded(events));
                    
